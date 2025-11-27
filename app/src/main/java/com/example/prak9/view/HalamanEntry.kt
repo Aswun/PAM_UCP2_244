@@ -73,7 +73,7 @@ fun EntrySiswaBody(
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(id = R.string.submit)) // Asumsi stringResource(id = "Submit") adalah R.string.submit
+            Text(text = stringResource(id = R.string.btn_submit)) // Asumsi stringResource(id = "Submit") adalah R.string.submit
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.prak9.view.route.DestinasiHome
 import com.example.prak9.R
@@ -53,5 +54,29 @@ fun HomeScreen(
                 .padding(paddingValues = innerPadding)
                 .fillMaxSize()
         )
+    }
+}
+
+@Composable
+fun BodyHome(
+    itemSiswa: List<Siswa>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        if (itemSiswa.isEmpty()) {
+            Text(
+                text = stringResource(id = R.string.deskripsi_no_item),
+                    textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+        } else {
+            ListSiswa(
+                itemSiswa = itemSiswa,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = 8.dp))
+            )
+        }
     }
 }
