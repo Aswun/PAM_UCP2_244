@@ -53,6 +53,7 @@ dependencies {
 
     implementation(libs.compose.icons)
     implementation(libs.bundles.room)
+    implementation(libs.androidx.ui)
     ksp(libs.room.compiler)
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.lifecycle.runtime.compose)
