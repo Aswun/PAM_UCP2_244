@@ -7,8 +7,36 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntrySiswaApp(
-    navigationBack: () -> Unit,
+fun EntrySiswaScreen(
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: EntrySiswaViewModel = viewModel(factory = PenyediaViewModel.Factory)
-) {}
+    viewModel: EntryViewModel = viewModel(factory = PenyediaViewModel.Factory)
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            SiswaTopAppBar(
+                title = stringResource(id = DestinasiEntry.titleRes), // Asumsi DestinasiEntry.titleRes
+                canNavigateBack = true,
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) { innerPadding ->
+        EntrySiswaBody(
+            uiStateSiswa = viewModel.uiStateSiswa,
+            onSiswaValueChange = viewModel.updateUiState,
+            onSaveClick = {
+                coroutineScope.launch {
+                    viewModel.saveSiswa()
+                    navigateBack()
+                }
+            },
+            modifier = Modifier
+                .padding(paddingValues = innerPadding)
+                .verticalScroll(state = rememberScrollState())
+                .fillMaxWidth()
+        )
+    }
+}
