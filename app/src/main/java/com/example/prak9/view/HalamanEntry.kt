@@ -16,6 +16,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prak9.R
 import com.example.prak9.view.route.DestinasiEntry
+import com.example.prak9.viewmodel.DetailSiswa
+import com.example.prak9.viewmodel.EntryViewModel
+import com.example.prak9.viewmodel.PenyediaViewModel
+import com.example.prak9.viewmodel.UiStateSiswa
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

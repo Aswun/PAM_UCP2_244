@@ -5,8 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.prak9.repo.RepoSiswa
+import com.example.prak9.room.Siswa
 
-class EntryViewModel(private val repositoriSiswa: RepositoriSiswa) : ViewModel() {
+class EntryViewModel(private val repoSiswa: RepoSiswa) : ViewModel() {
 
     /**
      * Berisi status Siswa saat ini
@@ -36,7 +37,44 @@ class EntryViewModel(private val repositoriSiswa: RepositoriSiswa) : ViewModel()
      */
     suspend fun saveSiswa() {
         if (validasiInput()) {
-            repositoriSiswa.insertSiswa(siswa = uiStateSiswa.detailSiswa.toSiswa())
+            repoSiswa.insertSiswa(siswa = uiStateSiswa.detailSiswa.toSiswa())
         }
     }
 }
+
+/**
+ * Mewakili Status UI untuk Siswa.
+ */
+data class UiStateSiswa(
+    val detailSiswa: DetailSiswa = DetailSiswa(),
+    val isEntryValid: Boolean = false
+)
+
+data class DetailSiswa(
+    val id: Int = 0,
+    val nama: String = "",
+    val alamat: String = "",
+    val telpon: String = ""
+)
+
+/* Fungsi untuk mengkonversi data input ke data dalam tabel sesuai jenis datanya */
+fun DetailSiswa.toSiswa(): Siswa = Siswa(
+    id = id,
+    nama = nama,
+    alamat = alamat,
+    telpon = telpon
+)
+
+// Fungsi konversi dari entitas Siswa ke DetailSiswa (UI-friendly)
+fun Siswa.toDetailSiswa(): DetailSiswa = DetailSiswa(
+    id = id,
+    nama = nama,
+    alamat = alamat,
+    telpon = telpon
+)
+
+// Fungsi untuk mengkonversi dari entitas Siswa ke UiStateSiswa
+fun Siswa.toUiStateSiswa(isEntryValid: Boolean = false): UiStateSiswa = UiStateSiswa(
+    detailSiswa = this.toDetailSiswa(),
+    isEntryValid = isEntryValid
+)
