@@ -21,6 +21,7 @@ import com.example.prak9.viewmodel.HomeViewModel
 import com.example.prak9.viewmodel.provider.PenyediaViewModel
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
