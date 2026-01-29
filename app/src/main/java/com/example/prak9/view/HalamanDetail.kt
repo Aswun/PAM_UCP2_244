@@ -26,17 +26,16 @@ import com.example.prak9.viewmodel.provider.PenyediaViewModel
 import com.example.prak9.R
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.getValue
-import com.example.prak9.room.Siswa
-import com.example.prak9.viewmodel.DetailSiswaUiState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
-import com.example.prak9.viewmodel.toSiswa
+import com.example.prak9.room.Buku
 import com.example.prak9.view.route.DestinasiDetail
-
+import com.example.prak9.viewmodel.DetailBukuUiState
+import com.example.prak9.viewmodel.toBuku
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailSiswaScreen(
+fun DetailSiswaScreen( // Nama fungsi boleh tetap atau diganti jadi DetailBukuScreen
     navigateToEditItem: (Int) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -53,7 +52,7 @@ fun DetailSiswaScreen(
         floatingActionButton = {
             val uiState = viewModel.uiDetailState.collectAsState()
             FloatingActionButton(
-                onClick = { navigateToEditItem(uiState.value.detailSiswa.id) },
+                onClick = { navigateToEditItem(uiState.value.detailBuku.id) },
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large))
 
@@ -67,10 +66,10 @@ fun DetailSiswaScreen(
     ) { innerPadding ->
         val uiState = viewModel.uiDetailState.collectAsState()
         val coroutineScope = rememberCoroutineScope()
-        BodyDetailDataSiswa(
-            detailSiswaUiState = uiState.value,
+        BodyDetailDataBuku(
+            detailBukuUiState = uiState.value,
             onDelete = { coroutineScope.launch {
-                viewModel.deleteSiswa()
+                viewModel.deleteBuku()
                 navigateBack()
             }},
             modifier = Modifier
@@ -81,8 +80,8 @@ fun DetailSiswaScreen(
 }
 
 @Composable
-private fun BodyDetailDataSiswa(
-    detailSiswaUiState: DetailSiswaUiState,
+private fun BodyDetailDataBuku(
+    detailBukuUiState: DetailBukuUiState,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -92,8 +91,8 @@ private fun BodyDetailDataSiswa(
     ) {
         var deleteConfirmationRequired by rememberSaveable { mutableStateOf(false) }
 
-        DetailDataSiswa(
-            siswa = detailSiswaUiState.detailSiswa.toSiswa(),
+        DetailDataBuku(
+            buku = detailBukuUiState.detailBuku.toBuku(),
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -118,8 +117,8 @@ private fun BodyDetailDataSiswa(
 }
 
 @Composable
-fun DetailDataSiswa(
-    siswa: Siswa, modifier: Modifier = Modifier
+fun DetailDataBuku(
+    buku: Buku, modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier, colors = CardDefaults.cardColors(
@@ -134,37 +133,27 @@ fun DetailDataSiswa(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_medium))
         ) {
             BarisDetailData(
-                labelResID = R.string.nama1,
-                itemDetail = siswa.nama,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
+                labelResID = R.string.nama_buku,
+                itemDetail = buku.judulBuku,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
             )
             BarisDetailData(
-                labelResID = R.string.alamat1,
-                itemDetail = siswa.alamat,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
+                labelResID = R.string.pengarang,
+                itemDetail = buku.pengarang,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
             )
             BarisDetailData(
-                labelResID = R.string.telpon1,
-                itemDetail = siswa.telpon,
-                modifier = Modifier.padding(
-                    horizontal = dimensionResource(
-                        id = R.dimen
-                            .padding_medium
-                    )
-                )
+                labelResID = R.string.kategori_buku,
+                itemDetail = buku.idKategori.toString(), // Idealnya nama kategori, tapi ID dulu sesuai struktur
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
+            )
+            // Anda bisa menambahkan baris untuk Tanggal Masuk jika ada string resource-nya
+            BarisDetailData(
+                labelResID = R.string.app_name, // Placeholder jika belum ada resource "Tanggal Masuk"
+                itemDetail = buku.tglMasuk,
+                modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
             )
         }
-
     }
 }
 

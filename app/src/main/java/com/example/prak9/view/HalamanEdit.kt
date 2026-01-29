@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,12 +34,15 @@ fun EditSiswaScreen(
         modifier = modifier
     ) { innerPadding ->
         val coroutineScope = rememberCoroutineScope()
-        EntrySiswaBody(
-            uiStateSiswa = viewModel.uiStateSiswa,
-            onSiswaValueChange = viewModel::updateUiState,
+        val listKategori by viewModel.kategoriUiState.collectAsState()
+
+        EntryBukuBody(
+            uiStateBuku = viewModel.uiStateBuku,
+            listKategori = listKategori,
+            onBukuValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.updateSiswa()
+                    viewModel.updateBuku()
                     navigateBack()
                 }
             },

@@ -28,13 +28,14 @@ object PenyediaViewModel {
         initializer {
             DetailViewModel(
                 this.createSavedStateHandle(),
-                aplikasiPustaka().container.repoSiswa
+                aplikasiPustaka().container.repoBuku
             )
         }
         initializer {
             EditViewModel(
                 this.createSavedStateHandle(),
-                aplikasiPustaka().container.repoSiswa
+                aplikasiPustaka().container.repoBuku,
+                aplikasiPustaka().container.repoKategori
             )
         }
     }
