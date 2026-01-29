@@ -3,27 +3,28 @@ package com.example.prak9.view
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.*
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.prak9.view.route.DestinasiHome
 import com.example.prak9.R
-import com.example.prak9.room.Siswa
+import com.example.prak9.room.Buku
+import com.example.prak9.view.route.DestinasiHome
 import com.example.prak9.viewmodel.HomeViewModel
 import com.example.prak9.viewmodel.provider.PenyediaViewModel
-import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +40,7 @@ fun HomeScreen(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SiswaTopAppBar(
-                title = stringResource(id = DestinasiHome.titleRes),
+                title = "Daftar Buku",
                 canNavigateBack = false,
                 scrollBehavior = scrollBehavior
             )
@@ -48,21 +49,21 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = navigateToItemEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(all = dimensionResource(R.dimen.padding_large))
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.entry_siswa)
+                    contentDescription = stringResource(R.string.entry_buku)
                 )
             }
         }
     ) { innerPadding ->
-        val uiStateSiswa by viewModel.homeUiState.collectAsState()
+        val uiStateBuku by viewModel.homeUiState.collectAsState()
         BodyHome(
-            itemSiswa = uiStateSiswa.listSiswa,
-            onSiswaClick = navigateToItemUpdate,
+            itemBuku = uiStateBuku.listBuku,
+            onBukuClick = navigateToItemUpdate,
             modifier = Modifier
-                .padding(paddingValues = innerPadding)
+                .padding(innerPadding)
                 .fillMaxSize()
         )
     }
@@ -70,24 +71,25 @@ fun HomeScreen(
 
 @Composable
 fun BodyHome(
-    itemSiswa: List<Siswa>,
-    onSiswaClick: (Int) -> Unit,
+    itemBuku: List<Buku>,
+    onBukuClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        if (itemSiswa.isEmpty()) {
+        if (itemBuku.isEmpty()) {
             Text(
-                text = stringResource(id = R.string.deskripsi_no_item),
-                    textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge
+                text = "Tidak ada data Buku. Tap + untuk menambah data",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(16.dp)
             )
         } else {
-            ListSiswa(
-                itemSiswa = itemSiswa,
-                onSiswaClick = {onSiswaClick(it.id)},
+            ListBuku(
+                itemBuku = itemBuku,
+                onBukuClick = { onBukuClick(it.id) },
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_small))
             )
         }
@@ -95,26 +97,26 @@ fun BodyHome(
 }
 
 @Composable
-fun ListSiswa(
-    itemSiswa: List<Siswa>,
-    onSiswaClick: (Siswa) -> Unit,
+fun ListBuku(
+    itemBuku: List<Buku>,
+    onBukuClick: (Buku) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = itemSiswa, key = { it.id }) { person ->
-            DataSiswa(
-                siswa = person,
+        items(items = itemBuku, key = { it.id }) { buku ->
+            DataBuku(
+                buku = buku,
                 modifier = Modifier
-                    .padding(all = dimensionResource(R.dimen.padding_small))
-                    .clickable { onSiswaClick(person) }
+                    .padding(dimensionResource(R.dimen.padding_small))
+                    .clickable { onBukuClick(buku) }
             )
         }
     }
 }
 
 @Composable
-fun DataSiswa(
-    siswa: Siswa,
+fun DataBuku(
+    buku: Buku,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -122,29 +124,39 @@ fun DataSiswa(
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
-            modifier = Modifier.padding(all = dimensionResource(R.dimen.padding_large)),
-            verticalArrangement = Arrangement.spacedBy(space = dimensionResource(R.dimen.padding_small))
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_large)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = siswa.nama,
+                    text = buku.judulBuku,
                     style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(Modifier.weight(weight = 1f))
                 Icon(
-                    imageVector = Icons.Default.Phone,
+                    imageVector = Icons.Default.DateRange,
                     contentDescription = null,
                 )
+                Spacer(Modifier.width(4.dp))
                 Text(
-                    text = siswa.telpon,
+                    text = buku.tglMasuk,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(imageVector = Icons.Default.Person, contentDescription = null)
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = buku.pengarang,
                     style = MaterialTheme.typography.titleMedium
                 )
             }
             Text(
-                text = siswa.alamat,
-                style = MaterialTheme.typography.titleMedium
+                text = "Kategori ID: ${buku.idKategori}", // Idealnya join nama kategori, tapi untuk sekarang ID dulu
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

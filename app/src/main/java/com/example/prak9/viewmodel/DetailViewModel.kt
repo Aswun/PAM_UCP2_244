@@ -3,29 +3,31 @@ package com.example.prak9.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.prak9.repo.RepoSiswa
+import com.example.prak9.repo.RepoBuku
 import com.example.prak9.view.route.DestinasiDetail
+import com.example.prak9.room.Buku
 import kotlinx.coroutines.flow.*
 
-
-class DetailViewModel (
+class DetailViewModel(
     savedStateHandle: SavedStateHandle,
-    private val repoSiswa: RepoSiswa) : ViewModel(){
+    private val repoBuku: RepoBuku
+) : ViewModel() {
 
-    private val idSiswa: Int = checkNotNull(savedStateHandle[DestinasiDetail.itemIDArg])
+    private val idBuku: Int = checkNotNull(savedStateHandle[DestinasiDetail.itemIDArg])
 
-    val uiDetailState: StateFlow<DetailSiswaUiState> =
-        repoSiswa.getSiswaStream(idSiswa)
+    val uiDetailState: StateFlow<DetailBukuUiState> =
+        repoBuku.getBukuStream(idBuku)
             .filterNotNull()
             .map {
-                DetailSiswaUiState(detailSiswa = it.toDetailSiswa())
+                DetailBukuUiState(detailBuku = it.toDetailBuku())
             }.stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-                initialValue = DetailSiswaUiState()
+                initialValue = DetailBukuUiState()
             )
-    suspend fun deleteSiswa(){
-        repoSiswa.deleteSiswa(uiDetailState.value.detailSiswa.toSiswa())
+
+    suspend fun deleteBuku() {
+        repoBuku.deleteBuku(uiDetailState.value.detailBuku.toBuku())
     }
 
     companion object {
@@ -34,8 +36,8 @@ class DetailViewModel (
 }
 
 /**
- * UI state for ItemDetailsScreen
+ * UI state untuk Detail Buku
  */
-data class DetailSiswaUiState(
-    val detailSiswa: DetailSiswa = DetailSiswa()
+data class DetailBukuUiState(
+    val detailBuku: DetailBuku = DetailBuku()
 )
