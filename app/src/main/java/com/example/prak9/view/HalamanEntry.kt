@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntrySiswaScreen( // Bisa diganti namanya jadi EntryBukuScreen
+fun EntryBukuScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: EntryViewModel = viewModel(factory = PenyediaViewModel.Factory)
@@ -36,7 +36,8 @@ fun EntrySiswaScreen( // Bisa diganti namanya jadi EntryBukuScreen
             SiswaTopAppBar(
                 title = stringResource(DestinasiEntry.titleRes),
                 canNavigateBack = true,
-                scrollBehavior = scrollBehavior
+                scrollBehavior = scrollBehavior,
+                navigateUp = navigateBack
             )
         }
     ) { innerPadding ->
@@ -97,7 +98,7 @@ fun FormInputBuku(
     enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedKategoriNama by remember { mutableStateOf("") }
+    var selectedKategoriNama by remember { mutableStateOf(detailBuku.namaKategori) } // Perbaikan: init state
 
     Column(
         modifier = modifier,
@@ -122,13 +123,12 @@ fun FormInputBuku(
         OutlinedTextField(
             value = detailBuku.tglMasuk,
             onValueChange = { onValueChange(detailBuku.copy(tglMasuk = it)) },
-            label = { Text("Tanggal Masuk") },
+            label = { Text(stringResource(R.string.tanggal_masuk)) }, // Menggunakan resource baru
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
 
-        // Dropdown Kategori
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }
@@ -160,7 +160,6 @@ fun FormInputBuku(
                 }
             }
         }
-
         if (enabled) {
             Text(
                 text = stringResource(R.string.required_field),

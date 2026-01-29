@@ -9,15 +9,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.prak9.view.DetailSiswaScreen
-import com.example.prak9.view.EditSiswaScreen
-import com.example.prak9.view.route.DestinasiHome
-import com.example.prak9.view.route.DestinasiEntry
-import com.example.prak9.view.EntrySiswaScreen
+import com.example.prak9.view.DetailSiswaScreen // Pastikan nama fungsi di HalamanDetail sesuai
+import com.example.prak9.view.EditSiswaScreen // Pastikan nama fungsi di HalamanEdit sesuai
+import com.example.prak9.view.EntryBukuScreen
 import com.example.prak9.view.HomeScreen
 import com.example.prak9.view.route.DestinasiDetail
-import com.example.prak9.view.route.DestinasiDetail.itemIDArg
-import com.example.prak9.view.route.DestinasiEditSiswa
+import com.example.prak9.view.route.DestinasiEditBuku // Gunakan Destinasi baru
+import com.example.prak9.view.route.DestinasiEntry
+import com.example.prak9.view.route.DestinasiHome
 
 @Composable
 fun SiswaApp(navController: NavHostController = rememberNavController(), modifier: Modifier = Modifier) {
@@ -38,30 +37,28 @@ fun HostNavigasi(
         composable(route = DestinasiHome.route) {
             HomeScreen(
                 navigateToItemEntry = { navController.navigate(route = DestinasiEntry.route) },
-                //edit 1 : tambahkan parameter navigateToItemUpdate
                 navigateToItemUpdate = {
                     navController.navigate("${DestinasiDetail.route}/$it")
                 }
             )
         }
         composable(route = DestinasiEntry.route) {
-            EntrySiswaScreen(navigateBack = { navController.popBackStack() })
+            EntryBukuScreen(navigateBack = { navController.popBackStack() })
         }
-        //edit 2 : tambahkan 2 composable route
         composable (route = DestinasiDetail.routeWithArgs,
-            arguments = listOf(navArgument(itemIDArg) {
+            arguments = listOf(navArgument(DestinasiDetail.itemIDArg) {
                 type = NavType.IntType
             })
         ){
             DetailSiswaScreen(
                 navigateToEditItem = { id ->
-                    navController.navigate("${DestinasiEditSiswa.route}/$id")
+                    navController.navigate("${DestinasiEditBuku.route}/$id")
                 },
                 navigateBack = { navController.navigateUp() }
             )
         }
-        composable(route = DestinasiEditSiswa.routeWithArgs,
-            arguments = listOf(navArgument(DestinasiEditSiswa.itemIdArg) {
+        composable(route = DestinasiEditBuku.routeWithArgs,
+            arguments = listOf(navArgument(DestinasiEditBuku.itemIdArg) {
                 type = NavType.IntType
             })
         ) {

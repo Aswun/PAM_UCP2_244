@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.prak9.repo.RepoBuku
 import com.example.prak9.repo.RepoKategori
 import com.example.prak9.room.Kategori
-import com.example.prak9.view.route.DestinasiEditSiswa
+import com.example.prak9.view.route.DestinasiEditBuku
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -26,7 +26,7 @@ class EditViewModel(
     var uiStateBuku by mutableStateOf(UiStateBuku())
         private set
 
-    private val idBuku: Int = checkNotNull(savedStateHandle[DestinasiEditSiswa.itemIdArg])
+    private val idBuku: Int = checkNotNull(savedStateHandle[DestinasiEditBuku.itemIdArg])
 
     val kategoriUiState: StateFlow<List<Kategori>> = repoKategori.getAllKategoriStream()
         .stateIn(
