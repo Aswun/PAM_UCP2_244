@@ -9,13 +9,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.ucp2.view.DetailSiswaScreen // Pastikan nama fungsi di HalamanDetail sesuai
-import com.example.ucp2.view.EditSiswaScreen // Pastikan nama fungsi di HalamanEdit sesuai
+import com.example.ucp2.view.DetailSiswaScreen
+import com.example.ucp2.view.EditSiswaScreen
 import com.example.ucp2.view.EntryBukuScreen
+import com.example.ucp2.view.EntryKategoriScreen
 import com.example.ucp2.view.HomeScreen
 import com.example.ucp2.view.route.DestinasiDetail
-import com.example.ucp2.view.route.DestinasiEditBuku // Gunakan Destinasi baru
+import com.example.ucp2.view.route.DestinasiEditBuku
 import com.example.ucp2.view.route.DestinasiEntry
+import com.example.ucp2.view.route.DestinasiEntryKategori
 import com.example.ucp2.view.route.DestinasiHome
 
 @Composable
@@ -39,17 +41,23 @@ fun HostNavigasi(
                 navigateToItemEntry = { navController.navigate(route = DestinasiEntry.route) },
                 navigateToItemUpdate = {
                     navController.navigate("${DestinasiDetail.route}/$it")
+                },
+                navigateToKategori = {
+                    navController.navigate(DestinasiEntryKategori.route)
                 }
             )
         }
         composable(route = DestinasiEntry.route) {
             EntryBukuScreen(navigateBack = { navController.popBackStack() })
         }
-        composable (route = DestinasiDetail.routeWithArgs,
+        composable(route = DestinasiEntryKategori.route) {
+            EntryKategoriScreen(navigateBack = { navController.popBackStack() })
+        }
+        composable(route = DestinasiDetail.routeWithArgs,
             arguments = listOf(navArgument(DestinasiDetail.itemIDArg) {
                 type = NavType.IntType
             })
-        ){
+        ) {
             DetailSiswaScreen(
                 navigateToEditItem = { id ->
                     navController.navigate("${DestinasiEditBuku.route}/$id")

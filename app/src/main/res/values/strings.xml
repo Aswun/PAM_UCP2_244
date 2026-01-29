@@ -20,4 +20,8 @@
     <string name="update">Edit</string>
     <string name="attention">Perhatian</string>
     <string name="tanya">Apakah anda yakin ingin menghapus data ini?</string>
+
+    <string name="entry_kategori">Tambah Kategori</string>
+    <string name="nama_kategori">Nama Kategori</string>
+    <string name="success_add_kategori">Berhasil menambah kategori</string>
 </resources>

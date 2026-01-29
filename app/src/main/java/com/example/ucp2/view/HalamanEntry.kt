@@ -98,7 +98,7 @@ fun FormInputBuku(
     enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedKategoriNama by remember { mutableStateOf(detailBuku.namaKategori) } // Perbaikan: init state
+    var selectedKategoriNama by remember { mutableStateOf(detailBuku.namaKategori) }
 
     Column(
         modifier = modifier,
@@ -123,7 +123,7 @@ fun FormInputBuku(
         OutlinedTextField(
             value = detailBuku.tglMasuk,
             onValueChange = { onValueChange(detailBuku.copy(tglMasuk = it)) },
-            label = { Text(stringResource(R.string.tanggal_masuk)) }, // Menggunakan resource baru
+            label = { Text(stringResource(R.string.tanggal_masuk)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true

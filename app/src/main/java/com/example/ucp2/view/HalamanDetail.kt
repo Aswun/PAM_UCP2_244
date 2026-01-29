@@ -35,7 +35,7 @@ import com.example.ucp2.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailSiswaScreen( // Nama fungsi boleh tetap atau diganti jadi DetailBukuScreen
+fun DetailSiswaScreen(
     navigateToEditItem: (Int) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -144,12 +144,11 @@ fun DetailDataBuku(
             )
             BarisDetailData(
                 labelResID = R.string.kategori_buku,
-                itemDetail = buku.idKategori.toString(), // Idealnya nama kategori, tapi ID dulu sesuai struktur
+                itemDetail = buku.idKategori.toString(),
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
             )
-            // Anda bisa menambahkan baris untuk Tanggal Masuk jika ada string resource-nya
             BarisDetailData(
-                labelResID = R.string.app_name, // Placeholder jika belum ada resource "Tanggal Masuk"
+                labelResID = R.string.app_name,
                 itemDetail = buku.tglMasuk,
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.padding_medium))
             )

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.ucp2.repo.AplikasiKategoriBuku
 import com.example.ucp2.viewmodel.DetailViewModel
 import com.example.ucp2.viewmodel.EditViewModel
+import com.example.ucp2.viewmodel.EntryKategoriViewModel
 import com.example.ucp2.viewmodel.EntryViewModel
 import com.example.ucp2.viewmodel.HomeViewModel
 
@@ -35,6 +36,11 @@ object PenyediaViewModel {
             EditViewModel(
                 this.createSavedStateHandle(),
                 aplikasiPustaka().container.repoBuku,
+                aplikasiPustaka().container.repoKategori
+            )
+        }
+        initializer {
+            EntryKategoriViewModel(
                 aplikasiPustaka().container.repoKategori
             )
         }

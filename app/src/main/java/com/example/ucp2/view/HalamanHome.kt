@@ -20,16 +20,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.ucp2.R
 import com.example.ucp2.room.Buku
+import com.example.ucp2.view.route.DestinasiHome
 import com.example.ucp2.viewmodel.HomeViewModel
 import com.example.ucp2.viewmodel.provider.PenyediaViewModel
-import com.example.ucp2.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToItemEntry: () -> Unit,
     navigateToItemUpdate: (Int) -> Unit,
+    navigateToKategori: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
@@ -61,6 +63,7 @@ fun HomeScreen(
         BodyHome(
             itemBuku = uiStateBuku.listBuku,
             onBukuClick = navigateToItemUpdate,
+            onKategoriClick = navigateToKategori,
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
@@ -72,15 +75,26 @@ fun HomeScreen(
 fun BodyHome(
     itemBuku: List<Buku>,
     onBukuClick: (Int) -> Unit,
+    onKategoriClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
+        Button(
+            onClick = onKategoriClick,
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth(0.9f),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Text(text = stringResource(R.string.entry_kategori))
+        }
+
         if (itemBuku.isEmpty()) {
             Text(
-                text = "Tidak ada data Buku. Tap + untuk menambah data",
+                text = stringResource(R.string.deskripsi_no_item),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(16.dp)
@@ -154,7 +168,7 @@ fun DataBuku(
                 )
             }
             Text(
-                text = "Kategori ID: ${buku.idKategori}", // Idealnya join nama kategori, tapi untuk sekarang ID dulu
+                text = "Kategori ID: ${buku.idKategori}",
                 style = MaterialTheme.typography.bodyMedium
             )
         }
