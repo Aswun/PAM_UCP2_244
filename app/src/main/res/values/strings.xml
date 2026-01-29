@@ -19,4 +19,11 @@
     <string name="update">Edit</string>
     <string name="attention">Perhatian</string>
     <string name="tanya">Apakah anda yakin menghapus ini ?</string>
+    <string name="nama_buku">Nama Buku</string>
+    <string name="kategori_buku"> Kategori Buku</string>
+    <string name="pengarang">Pengarang</string>
+    <string name="entry_buku">Tambah Buku</string>
+    <string name="entry_kategori">Tambah Kategori</string>
+    <string name="detail_buku">Detail Buku</string>
+    <string name="edit_buku">Edit Buku</string>
 </resources>

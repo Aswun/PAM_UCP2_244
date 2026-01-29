@@ -4,9 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.prak9.repo.RepoBuku
+import com.example.prak9.repo.RepoKategori
 import com.example.prak9.repo.RepoSiswa
 import com.example.prak9.room.Siswa
+import com.example.prak9.room.Buku
+import com.example.prak9.room.Kategori
 
+/**
 class EntryViewModel(private val repoSiswa: RepoSiswa) : ViewModel() {
 
     /**
@@ -77,6 +82,73 @@ fun Siswa.toDetailSiswa(): DetailSiswa = DetailSiswa(
 )
 
 // Fungsi untuk mengkonversi dari entitas Siswa ke UiStateSiswa
+fun Siswa.toUiStateSiswa(isEntryValid: Boolean = false): UiStateSiswa = UiStateSiswa(
+    detailSiswa = this.toDetailSiswa(),
+    isEntryValid = isEntryValid
+)
+ **/
+
+class EntryViewModel(private val repoKategori: RepoKategori, private val repoBuku: RepoBuku) : ViewModel() {
+
+
+    var uiStateBuku by mutableStateOf(value = UiStateBuku())
+        private set
+
+
+    private fun validasiInput(uiState: DetailSiswa = uiStateBuku.detailBuku): Boolean {
+        return with(receiver = uiState) {
+            judulBuku.isNotBlank() && pengarang.isNotBlank() && tglMasuk.isNotBlank()
+        }
+    }
+
+    fun updateUiState(detailSiswa: DetailSiswa) {
+        uiStateSiswa =
+            UiStateSiswa(
+                detailSiswa = detailSiswa,
+                isEntryValid = validasiInput(uiState = detailSiswa)
+            )
+    }
+
+    /**
+     * Fungsi untuk menyimpan data yang di-entry
+     */
+    suspend fun saveSiswa() {
+        if (validasiInput()) {
+            repoSiswa.insertSiswa(siswa = uiStateSiswa.detailSiswa.toSiswa())
+        }
+    }
+}
+
+
+data class UiStateSiswa(
+    val detailSiswa: DetailSiswa = DetailSiswa(),
+    val isEntryValid: Boolean = false
+)
+
+data class DetailSiswa(
+    val id: Int = 0,
+    val nama: String = "",
+    val alamat: String = "",
+    val email: String = "",
+    val telpon: String = ""
+)
+
+fun DetailSiswa.toSiswa(): Siswa = Siswa(
+    id = id,
+    nama = nama,
+    alamat = alamat,
+    email = email,
+    telpon = telpon
+)
+
+fun Siswa.toDetailSiswa(): DetailSiswa = DetailSiswa(
+    id = id,
+    nama = nama,
+    alamat = alamat,
+    email = email,
+    telpon = telpon
+)
+
 fun Siswa.toUiStateSiswa(isEntryValid: Boolean = false): UiStateSiswa = UiStateSiswa(
     detailSiswa = this.toDetailSiswa(),
     isEntryValid = isEntryValid
