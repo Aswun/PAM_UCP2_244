@@ -1,23 +1,30 @@
 package com.example.prak9.room
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
-import java.util.Date
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "tblKategori")
 data class Kategori(
     @PrimaryKey(autoGenerate = true)
-    val id : Int = 0,
-    val nama : String
+    val id: Int = 0,
+    val nama: String
 )
 
-@Entity(tableName = "tblBuku")
+@Entity(
+    tableName = "tblBuku",
+    foreignKeys = [ForeignKey(
+        entity = Kategori::class,
+        parentColumns = ["id"],
+        childColumns = ["idKategori"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class Buku(
     @PrimaryKey(autoGenerate = true)
-    val id : Int = 0,
-    val judulBuku : String,
-    val pengarang : String,
-    val tglMasuk : Date,
-
+    val id: Int = 0,
+    val judulBuku: String,
+    val pengarang: String,
+    val tglMasuk: String,
+    val idKategori: Int
 )

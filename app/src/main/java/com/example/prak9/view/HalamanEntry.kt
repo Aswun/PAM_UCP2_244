@@ -2,35 +2,34 @@ package com.example.prak9.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.prak9.R
+import com.example.prak9.room.Kategori
 import com.example.prak9.view.route.DestinasiEntry
-import com.example.prak9.viewmodel.DetailSiswa
+import com.example.prak9.viewmodel.DetailBuku
 import com.example.prak9.viewmodel.EntryViewModel
 import com.example.prak9.viewmodel.provider.PenyediaViewModel
-import com.example.prak9.viewmodel.UiStateSiswa
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntrySiswaScreen(
+fun EntrySiswaScreen( // Bisa diganti namanya jadi EntryBukuScreen
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: EntryViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val kategoriList by viewModel.kategoriUiState.collectAsState()
+
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -41,99 +40,132 @@ fun EntrySiswaScreen(
             )
         }
     ) { innerPadding ->
-        EntrySiswaBody(
-            uiStateSiswa = viewModel.uiStateSiswa,
-            onSiswaValueChange = viewModel::updateUiState,
+        EntryBukuBody(
+            uiStateBuku = viewModel.uiStateBuku,
+            listKategori = kategoriList,
+            onBukuValueChange = viewModel::updateUiState,
             onSaveClick = {
                 coroutineScope.launch {
-                    viewModel.saveSiswa()
+                    viewModel.saveBuku()
                     navigateBack()
                 }
             },
             modifier = Modifier
                 .padding(paddingValues = innerPadding)
-                .verticalScroll(state = rememberScrollState())
+                .verticalScroll(rememberScrollState())
                 .fillMaxWidth()
         )
     }
 }
 
 @Composable
-fun EntrySiswaBody(
-    uiStateSiswa: UiStateSiswa,
-    onSiswaValueChange: (DetailSiswa) -> Unit,
+fun EntryBukuBody(
+    uiStateBuku: com.example.prak9.viewmodel.UiStateBuku,
+    listKategori: List<Kategori>,
+    onBukuValueChange: (DetailBuku) -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(space = dimensionResource(R.dimen.padding_large)),
-        modifier = modifier.padding(all = dimensionResource(R.dimen.padding_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_large)),
+        modifier = modifier.padding(dimensionResource(R.dimen.padding_medium))
     ) {
-        FormInputSiswa(
-            detailSiswa = uiStateSiswa.detailSiswa,
-            onValueChange = onSiswaValueChange,
+        FormInputBuku(
+            detailBuku = uiStateBuku.detailBuku,
+            listKategori = listKategori,
+            onValueChange = onBukuValueChange,
             modifier = Modifier.fillMaxWidth()
         )
         Button(
             onClick = onSaveClick,
-            enabled = uiStateSiswa.isEntryValid,
+            enabled = uiStateBuku.isEntryValid,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(id = R.string.btn_submit))
+            Text(text = stringResource(R.string.btn_submit))
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormInputSiswa(
-    detailSiswa: DetailSiswa,
+fun FormInputBuku(
+    detailBuku: DetailBuku,
+    listKategori: List<Kategori>,
+    onValueChange: (DetailBuku) -> Unit,
     modifier: Modifier = Modifier,
-    onValueChange: (DetailSiswa) -> Unit = {},
     enabled: Boolean = true
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedKategoriNama by remember { mutableStateOf("") }
+
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(space = dimensionResource(R.dimen.padding_medium))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium))
     ) {
         OutlinedTextField(
-            value = detailSiswa.nama,
-            onValueChange = { onValueChange(detailSiswa.copy(nama = it)) },
-            label = { Text(text = stringResource(id = R.string.nama)) },
+            value = detailBuku.judulBuku,
+            onValueChange = { onValueChange(detailBuku.copy(judulBuku = it)) },
+            label = { Text(stringResource(R.string.nama_buku)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
         OutlinedTextField(
-            value = detailSiswa.alamat,
-            onValueChange = { onValueChange(detailSiswa.copy(alamat = it)) },
-            label = { Text(text = stringResource(id = R.string.alamat)) },
+            value = detailBuku.pengarang,
+            onValueChange = { onValueChange(detailBuku.copy(pengarang = it)) },
+            label = { Text(stringResource(R.string.pengarang)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
         OutlinedTextField(
-            value = detailSiswa.telpon,
-            onValueChange = { onValueChange(detailSiswa.copy(telpon = it)) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            label = { Text(text = stringResource(id = R.string.telpon)) },
+            value = detailBuku.tglMasuk,
+            onValueChange = { onValueChange(detailBuku.copy(tglMasuk = it)) },
+            label = { Text("Tanggal Masuk") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true
         )
 
+        // Dropdown Kategori
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedKategoriNama,
+                onValueChange = {},
+                label = { Text(stringResource(R.string.kategori_buku)) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                listKategori.forEach { kategori ->
+                    DropdownMenuItem(
+                        text = { Text(text = kategori.nama) },
+                        onClick = {
+                            selectedKategoriNama = kategori.nama
+                            onValueChange(detailBuku.copy(idKategori = kategori.id))
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
 
         if (enabled) {
             Text(
-                text = stringResource(id = R.string.required_field),
+                text = stringResource(R.string.required_field),
                 modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_medium))
             )
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.padding_medium)),
-            thickness = dimensionResource(R.dimen.padding_small),
-            color = Color.Blue
-        )
     }
 }

@@ -4,152 +4,83 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.prak9.repo.RepoBuku
 import com.example.prak9.repo.RepoKategori
-import com.example.prak9.repo.RepoSiswa
-import com.example.prak9.room.Siswa
 import com.example.prak9.room.Buku
 import com.example.prak9.room.Kategori
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-/**
-class EntryViewModel(private val repoSiswa: RepoSiswa) : ViewModel() {
+class EntryViewModel(
+    private val repoKategori: RepoKategori,
+    private val repoBuku: RepoBuku
+) : ViewModel() {
 
-    /**
-     * Berisi status Siswa saat ini
-     */
-    var uiStateSiswa by mutableStateOf(value = UiStateSiswa())
+    var uiStateBuku by mutableStateOf(UiStateBuku())
         private set
 
-    /**
-     * Fungsi untuk memvalidasi input
-     */
-    private fun validasiInput(uiState: DetailSiswa = uiStateSiswa.detailSiswa): Boolean {
-        return with(receiver = uiState) {
-            nama.isNotBlank() && alamat.isNotBlank() && telpon.isNotBlank()
+    val kategoriUiState: StateFlow<List<Kategori>> = repoKategori.getAllKategoriStream()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = listOf()
+        )
+
+    fun updateUiState(detailBuku: DetailBuku) {
+        uiStateBuku = UiStateBuku(
+            detailBuku = detailBuku,
+            isEntryValid = validasiInput(detailBuku)
+        )
+    }
+
+    private fun validasiInput(uiState: DetailBuku = uiStateBuku.detailBuku): Boolean {
+        return with(uiState) {
+            judulBuku.isNotBlank() && pengarang.isNotBlank() && tglMasuk.isNotBlank() && idKategori != 0
         }
     }
 
-    fun updateUiState(detailSiswa: DetailSiswa) {
-        uiStateSiswa =
-            UiStateSiswa(
-                detailSiswa = detailSiswa,
-                isEntryValid = validasiInput(uiState = detailSiswa)
-            )
-    }
-
-    /**
-     * Fungsi untuk menyimpan data yang di-entry
-     */
-    suspend fun saveSiswa() {
+    suspend fun saveBuku() {
         if (validasiInput()) {
-            repoSiswa.insertSiswa(siswa = uiStateSiswa.detailSiswa.toSiswa())
+            repoBuku.insertBuku(uiStateBuku.detailBuku.toBuku())
         }
     }
 }
 
-/**
- * Mewakili Status UI untuk Siswa.
- */
-data class UiStateSiswa(
-    val detailSiswa: DetailSiswa = DetailSiswa(),
+data class UiStateBuku(
+    val detailBuku: DetailBuku = DetailBuku(),
     val isEntryValid: Boolean = false
 )
 
-data class DetailSiswa(
+data class DetailBuku(
     val id: Int = 0,
-    val nama: String = "",
-    val alamat: String = "",
-    val email: String = "",
-    val telpon: String = ""
+    val judulBuku: String = "",
+    val pengarang: String = "",
+    val tglMasuk: String = "",
+    val idKategori: Int = 0,
+    val namaKategori: String = ""
 )
 
-/* Fungsi untuk mengkonversi data input ke data dalam tabel sesuai jenis datanya */
-fun DetailSiswa.toSiswa(): Siswa = Siswa(
+fun DetailBuku.toBuku(): Buku = Buku(
     id = id,
-    nama = nama,
-    alamat = alamat,
-    email = email,
-    telpon = telpon
+    judulBuku = judulBuku,
+    pengarang = pengarang,
+    tglMasuk = tglMasuk,
+    idKategori = idKategori
 )
 
-// Fungsi konversi dari entitas Siswa ke DetailSiswa (UI-friendly)
-fun Siswa.toDetailSiswa(): DetailSiswa = DetailSiswa(
+fun Buku.toDetailBuku(): DetailBuku = DetailBuku(
     id = id,
-    nama = nama,
-    alamat = alamat,
-    email = email,
-    telpon = telpon
+    judulBuku = judulBuku,
+    pengarang = pengarang,
+    tglMasuk = tglMasuk,
+    idKategori = idKategori
 )
 
-// Fungsi untuk mengkonversi dari entitas Siswa ke UiStateSiswa
-fun Siswa.toUiStateSiswa(isEntryValid: Boolean = false): UiStateSiswa = UiStateSiswa(
-    detailSiswa = this.toDetailSiswa(),
-    isEntryValid = isEntryValid
-)
- **/
-
-class EntryViewModel(private val repoKategori: RepoKategori, private val repoBuku: RepoBuku) : ViewModel() {
-
-
-    var uiStateBuku by mutableStateOf(value = UiStateBuku())
-        private set
-
-
-    private fun validasiInput(uiState: DetailSiswa = uiStateBuku.detailBuku): Boolean {
-        return with(receiver = uiState) {
-            judulBuku.isNotBlank() && pengarang.isNotBlank() && tglMasuk.isNotBlank()
-        }
-    }
-
-    fun updateUiState(detailSiswa: DetailSiswa) {
-        uiStateSiswa =
-            UiStateSiswa(
-                detailSiswa = detailSiswa,
-                isEntryValid = validasiInput(uiState = detailSiswa)
-            )
-    }
-
-    /**
-     * Fungsi untuk menyimpan data yang di-entry
-     */
-    suspend fun saveSiswa() {
-        if (validasiInput()) {
-            repoSiswa.insertSiswa(siswa = uiStateSiswa.detailSiswa.toSiswa())
-        }
-    }
-}
-
-
-data class UiStateSiswa(
-    val detailSiswa: DetailSiswa = DetailSiswa(),
-    val isEntryValid: Boolean = false
-)
-
-data class DetailSiswa(
-    val id: Int = 0,
-    val nama: String = "",
-    val alamat: String = "",
-    val email: String = "",
-    val telpon: String = ""
-)
-
-fun DetailSiswa.toSiswa(): Siswa = Siswa(
-    id = id,
-    nama = nama,
-    alamat = alamat,
-    email = email,
-    telpon = telpon
-)
-
-fun Siswa.toDetailSiswa(): DetailSiswa = DetailSiswa(
-    id = id,
-    nama = nama,
-    alamat = alamat,
-    email = email,
-    telpon = telpon
-)
-
-fun Siswa.toUiStateSiswa(isEntryValid: Boolean = false): UiStateSiswa = UiStateSiswa(
-    detailSiswa = this.toDetailSiswa(),
+fun Buku.toUiStateBuku(isEntryValid: Boolean = false): UiStateBuku = UiStateBuku(
+    detailBuku = this.toDetailBuku(),
     isEntryValid = isEntryValid
 )
